@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zadanie 5</title>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script src="leaflet-routing-machine.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script src="leaflet-beautify-marker-icon.js"></script>
+    <script src="leaflet-roughcanvas.js"></script>
+    <script src="Leaflet.CountrySelect.js"></script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+    <link rel="stylesheet" href="leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet">
+    <link href="leaflet.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="leaflet-beautify-marker-icon.css">
+
+
+    <style>
+        html, body {
+            height: 100%;
+            padding: 0;
+            margin: 0;
+        }
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+<div id="map"></div>
+<script>
+    const gps = {lon: 17.073, lat: 48.153};
+    var map = L.map('map').setView(gps, 16);
+
+
+    var buildingBlocks = [{
+        "type": "Feature",
+        "properties": {
+            "block": "A",
+            "popupContent":
+                "<h2>Blok A</h2>"+
+                "<h3>Inštitúty:</h3>"+
+                "<li>INŠTIÚT KOMUNIKÁCIE A APLIKOVANEJ LINGVISTIKY</li>"+
+                "<h3>Ústavy:</h3>"+
+                "<li>ÚSTAV JADROVÉHO A FYZIKÁLNEHO INŽINIERSTVA</li>"},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [17.07255, 48.151825],
+                [17.07255,  48.151963],
+                [17.073863,  48.151963],
+                [17.073863, 48.151825],
+                [17.07255, 48.151825]
+            ]]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "block": "B",
+            "popupContent":
+                "<h2>Blok B</h2>"+
+                "<h3>Ústavy:</h3>"+
+                "<li>ÚSTAV ELEKTROTECHNIKY</li>"+
+                "<li>ÚSTAV MULTIMEDIÁLNYCH INFORMAČNÝCH A KOMUNIKAČNÝCH TECHNOLÓGIÍ</li>"},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [17.073, 48.152468],
+                [17.073,  48.15233],
+                [17.0743643,  48.15233],
+                [17.0743643, 48.152468],
+                [17.073, 48.152468]
+            ]]
+        },
+
+    }, {
+        "type": "Feature",
+        "properties": {
+            "block": "C",
+            "popupContent":
+                "<h2>Blok C</h2>"+
+                "<h3>Ústavy:</h3>"+
+                "<li>ÚSTAV ELEKTROENERGETIKY A APLIKOVANEJ ELEKTROTECHNIKY</li>"+
+                "<li>ÚSTAV INFORMATIKY A MATEMATIKY</li>"},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [17.07282, 48.152972],
+                [17.07282,  48.152829],
+                [17.07387,  48.152829],
+                [17.07387, 48.152972],
+                [17.07282, 48.152972]
+            ]]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "block": "D",
+            "popupContent":
+                "<h2>Blok D</h2>"+
+                "<h3>Ústavy:</h3>"+
+                "<li>ÚSTAV AUTOMOBILOVEJ MECHATRONIKY</li>"+
+                "<li>ÚSTAV ROBOTIKY A KYBERNETIKY</li>"},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [17.07319, 48.153476],
+                [17.07319,  48.153336],
+                [17.0743653,  48.153336],
+                [17.0743653, 48.153476],
+                [17.07319, 48.153476]
+            ]]
+        }
+    }, {
+        "type": "Feature",
+        "properties": {
+            "block": "E",
+            "popupContent":
+                "<h2>Blok E</h2>"+
+                "<h3>Ústavy:</h3>"+
+                "<li>ÚSTAV ELEKTRONIKY A FOTONIKY</li>"},
+        "geometry": {
+            "type": "Polygon",
+            "coordinates": [[
+                [17.07282, 48.153979],
+                [17.07282,  48.153836],
+                [17.07389,  48.153836],
+                [17.07389, 48.153979],
+                [17.07282, 48.153979]
+            ]]
+        }
+    }];
+
+    const randomColor = () => {
+        return `rgb(${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)}, ${Math.round(Math.random() * 255)})`;
+    }
+    const randomAngle = () => {
+        return (Math.random() > 0.5 ? -1 : 1) * (1 + Math.random() * 88);
+    }
+    const randomStyle = () => {
+        return (Math.random() > 0.8 ? 'solid' : '');
+    }
+
+    L.geoJSON(buildingBlocks, {
+        renderer: L.Canvas.roughCanvas(),
+        style: function (feature) {
+            styleObj = {
+                hachureAngle: randomAngle(),
+                fillColor: randomColor(),
+                fillStyle: randomStyle(),
+                roughness: 1,
+                bowing: 0.3
+            }
+            return styleObj
+        },
+        onEachFeature: (feature, layer) => {
+            if (feature.properties && feature.properties.popupContent) {
+                layer.bindPopup(feature.properties.popupContent);
+            }
+        }
+    }).addTo(map);
+
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+    }).addTo(map);
+
+    L.control.scale({imperial: true, metric: true}).addTo(map);
+
+    L.marker({lon: 17.075115, lat: 48.154115}, {icon: L.BeautifyIcon.icon(
+        {icon: 'bus', iconShape: 'marker', borderColor: 'red', textColor: 'red'})}).bindPopup(
+        "<h3>Autobusová zastávka Zoo:</h3>"+
+        "<p>Autobusy: 31, 39, N31, X31</p>"
+    ).addTo(map);
+
+    L.marker({lon: 17.072025, lat: 48.148328}, {icon: L.BeautifyIcon.icon(
+        {icon: 'bus', iconShape: 'marker', borderColor: 'red', textColor: 'red'})}).bindPopup(
+        "<h3>Autobusová zastávka Botanická záhrada:</h3>"+
+        "<p>Autobusy: 29, 32</p>"
+    ).addTo(map);
+
+    L.marker({lon: 17.072472, lat: 48.148117}, {icon: L.BeautifyIcon.icon(
+        {icon: 'train', iconShape: 'marker', borderColor: 'orange', textColor: 'orange'})}).bindPopup(
+        "<h3>Električková zastávka Botanická záhrada:</h3>"+
+        "<p>Električky: 4, 9</p>"
+    ).addTo(map);
+
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    L.Routing.control({
+        waypoints: [
+            L.latLng(48.1526, 17.0755),
+            L.latLng(48.1531, 17.073)
+        ],
+        routeWhileDragging: true,
+        geocoder: L.Control.Geocoder.nominatim()
+    }).addTo(map);
+    L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+    L.Control.geocoder().addTo(map);
+
+
+    var baseLayer = L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',{attribution: 'Tiles &copy; CartoDB'});
+    var select = L.countrySelect({exclude:"French Southern and Antarctic Lands"});
+
+    select.addTo(map);
+
+    select.on('change', function(e){
+        if (e.feature === undefined){ //Do nothing on title
+            return;
+        }
+        var country = L.geoJson(e.feature);
+        if (this.previousCountry != null){
+            map.removeLayer(this.previousCountry);
+        }
+        this.previousCountry = country;
+
+        map.addLayer(country);
+        map.fitBounds(country.getBounds());
+
+    });
+
+</script>
+</body>
+</html>
